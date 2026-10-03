@@ -41,7 +41,8 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:3000",
-  'https://movie-ticket-puce-one.vercel.app'
+  'https://movie-ticket-puce-one.vercel.app',
+  'https://project-1-kcpm.onrender.com'
 ].filter(Boolean);
 
 // Express CORS for API routes
