@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { assets } from '../assets/assets'
-import { MenuIcon, SearchIcon, TicketCheck, TicketPlus, XIcon } from 'lucide-react'
+import { MenuIcon, SearchIcon, TicketCheck, TicketPlus, XIcon, ShieldCheck } from 'lucide-react'
 import { useClerk, UserButton, useUser } from '@clerk/react'
+import { useAuth } from '../context/AuthContext'
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
   const {user} = useUser()
+  const { backendUser } = useAuth()
   const { openSignIn } = useClerk()
   const navigate = useNavigate()
 
@@ -44,12 +46,27 @@ const Navbar = () => {
       {/* Right Section */}
       <div className='flex items-center gap-6'>
         <SearchIcon className='hidden md:block w-6 h-6 cursor-pointer' />
+
+        {/* Admin Panel Button for Admins */}
+        {backendUser?.role === 'admin' && (
+          <Link
+            to='/admin'
+            className='hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-red-600/90 hover:bg-red-600 text-white text-xs font-semibold tracking-wide transition shadow-lg shadow-red-900/40 border border-red-500/30'
+          >
+            <ShieldCheck size={14} />
+            Admin Panel
+          </Link>
+        )}
+
         {
           !user ? ( <button onClick={openSignIn} className='h-10 px-6 bg-primary hover:bg-primary-dull transition rounded-full font-medium'>
           Login
         </button>) :( <UserButton>
           <UserButton.MenuItems >
           <UserButton.Action label='My Bookings' labelIcon={<TicketPlus  width={15}/>} onClick={() => navigate('/my-bookings') } />
+          {backendUser?.role === 'admin' && (
+            <UserButton.Action label='Admin Panel' labelIcon={<ShieldCheck width={15}/>} onClick={() => navigate('/admin') } />
+          )}
         </UserButton.MenuItems>
         </UserButton>)
         }
@@ -80,6 +97,16 @@ const Navbar = () => {
         <Link onClick={() => { scrollTo(0,0); setIsOpen(false)}} to='/'>Theaters</Link>
         <Link onClick={() => { scrollTo(0,0); setIsOpen(false)}} to='/'>Releases</Link>
         <Link onClick={() => { scrollTo(0,0); setIsOpen(false)}} to='/favorite'>Favorites</Link>
+        {backendUser?.role === 'admin' && (
+          <Link
+            onClick={() => { scrollTo(0,0); setIsOpen(false)}}
+            to='/admin'
+            className='text-red-400 font-semibold flex items-center gap-2'
+          >
+            <ShieldCheck size={20} />
+            Admin Panel
+          </Link>
+        )}
       </div>
 
     </div>
